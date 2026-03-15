@@ -9,7 +9,6 @@ const { nodeEnv, sessionSecret, db } = require('./config/env');
 
 const app = express();
 
-// trust proxy for secure cookies in prod (Render/Heroku/Nginx)
 if (nodeEnv === 'production') app.set('trust proxy', 1);
 
 app.set('view engine', 'ejs');
@@ -19,7 +18,6 @@ app.use(helmet());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-// session store in MySQL
 const MySQLStore = MySQLStoreFactory(session);
 const sessionStore = new MySQLStore({
   host: db.host,
@@ -42,10 +40,8 @@ app.use(session({
   }
 }));
 
-// CSRF (after session)
 app.use(csurf());
 
-// expose auth + csrf to views
 app.use((req, res, next) => {
   res.locals.isAuthenticated = !!req.session.userId;
   res.locals.username = req.session.username || null;
@@ -53,12 +49,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// routes
-app.use('/', require('./routes/dashboardRoutes'));
-app.use('/auth', require('./routes/authRoutes'));
+// ─── Routes ───────────────────────────────────────────────────────────────────
+app.use('/',       require('./routes/dashboardRoutes'));
+app.use('/auth',   require('./routes/authRoutes'));
 app.use('/quests', require('./routes/questRoutes'));
+app.use('/shop',   require('./routes/shopRoutes').router);
+app.use('/avatar', require('./routes/avatarRoutes'));
 
-// CSRF error handler
+// ─── Error handlers ───────────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
   if (err.code === 'EBADCSRFTOKEN') return res.status(403).send('Invalid CSRF token');
   next(err);

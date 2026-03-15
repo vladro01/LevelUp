@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LevelUp – My Logs</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <span class="nav-brand">⚡ LevelUp</span>
+        <div class="nav-links">
+          <a href="/">Dashboard</a>
+          <a href="/quests">Quests</a>
+          <a href="/quests/logs">My Logs</a>
+          <% if (isAuthenticated) { %>
+            <a href="/shop">Shop</a>
+            <a href="/avatar">My Avatar</a>
+            <span class="nav-user">Welcome, <strong><%= username %></strong></span>
+            <form method="POST" action="/auth/logout" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-sm btn-outline">Logout</button>
+            </form>
+          <% } else { %>
+            <a href="/auth/login" class="btn btn-sm">Login</a>
+            <a href="/auth/register" class="btn btn-sm btn-outline">Register</a>
+          <% } %>
+        </div>
+      </nav>
+
+  <main class="container">
+
+    <section class="panel">
+      <h2 class="panel-title">📊 Last 28 Days</h2>
+      <% if (!weekly.length) { %>
+        <p class="empty-state">No completions in the last 28 days yet.</p>
+      <% } else { %>
+        <div class="weekly-grid">
+          <% weekly.forEach(w => { %>
+            <div class="week-day">
+              <div class="week-bar-wrap">
+                <div class="week-bar" style="height: <%= Math.min(w.count * 20, 80) %>px"
+                     title="<%= w.count %> quest(s), <%= w.xp_earned %> XP"></div>
+              </div>
+              <span class="week-label"><%= new Date(w.performed_on).toLocaleDateString('en-GB', { day:'numeric', month:'short' }) %></span>
+              <span class="week-xp">+<%= w.xp_earned %>xp</span>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">📜 Recent Completions</h2>
+      <% if (!logs.length) { %>
+        <p class="empty-state">No quest logs yet. Complete a quest to start tracking!</p>
+      <% } else { %>
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Quest</th>
+              <th>Difficulty</th>
+              <th>XP</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% logs.forEach(l => { %>
+              <tr>
+                <td><%= new Date(l.performed_on).toLocaleDateString('en-GB') %></td>
+                <td><%= l.title %></td>
+                <td><span class="badge badge-<%= l.difficulty %>"><%= l.difficulty %></span></td>
+                <td>+<%= l.difficulty === 'easy' ? 10 : l.difficulty === 'medium' ? 20 : 30 %></td>
+                <td class="log-notes"><%= l.notes || '—' %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+
+    <div class="quick-links">
+      <a href="/" class="btn btn-outline">← Dashboard</a>
+      <a href="/quests" class="btn btn-outline">Manage Quests</a>
+    </div>
+
+  </main>
+</body>
+</html>

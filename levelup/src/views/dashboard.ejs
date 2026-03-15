@@ -1,18 +1,119 @@
 <!doctype html>
-<html>
-<head><link rel="stylesheet" href="/styles.css"></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LevelUp – Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
 <body>
-  <h1>LevelUp</h1>
 
-  <% if (!isAuthenticated) { %>
-    <p><a href="/auth/login">Login</a> | <a href="/auth/register">Register</a></p>
-  <% } else { %>
-    <p>Welcome, <%= username %> | <form method="POST" action="/auth/logout" style="display:inline">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <button>Logout</button>
-    </form></p>
+  <nav class="navbar">
+    <span class="nav-brand">⚡ LevelUp</span>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/quests">Quests</a>
+      <a href="/quests/logs">My Logs</a>
+      <% if (isAuthenticated) { %>
+        <a href="/shop">Shop</a>
+        <a href="/avatar">My Avatar</a>
+        <span class="nav-user">Welcome, <strong><%= username %></strong></span>
+        <form method="POST" action="/auth/logout" style="display:inline">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn btn-sm btn-outline">Logout</button>
+        </form>
+      <% } else { %>
+        <a href="/auth/login" class="btn btn-sm">Login</a>
+        <a href="/auth/register" class="btn btn-sm btn-outline">Register</a>
+      <% } %>
+    </div>
+  </nav>
 
-    <p><a href="/quests">My Quests</a></p>
-  <% } %>
+  <main class="container">
+
+    <% if (!isAuthenticated) { %>
+      <div class="hero">
+        <h1>Turn habits into quests.</h1>
+        <p>Track your daily routine, earn XP, build streaks — level up your real life.</p>
+        <div class="hero-actions">
+          <a href="/auth/register" class="btn">Get Started</a>
+          <a href="/auth/login" class="btn btn-outline">Sign In</a>
+        </div>
+      </div>
+
+    <% } else { %>
+
+      <% if (progress) { %>
+        <div class="stat-bar">
+          <div class="stat">
+            <span class="stat-label">Level</span>
+            <span class="stat-value"><%= progress.level %></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Total XP</span>
+            <span class="stat-value"><%= progress.totalXp %></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Streak</span>
+            <span class="stat-value"><%= progress.streak %> 🔥</span>
+          </div>
+          <div class="stat xp-progress-stat">
+            <span class="stat-label">Next level in <strong><%= progress.xpUntilNext %> XP</strong></span>
+            <div class="xp-bar-track">
+              <div class="xp-bar-fill" style="width: <%= 100 - progress.xpUntilNext %>%"></div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+
+      <section class="panel">
+        <h2 class="panel-title">📋 Due Today</h2>
+
+        <% if (typeof query !== 'undefined' && query.completed) { %>
+          <p class="flash flash-success">✅ Quest completed! XP awarded.</p>
+        <% } %>
+
+        <% if (!dueQuests || dueQuests.length === 0) { %>
+          <p class="empty-state">🎉 All done for today! Come back tomorrow to keep your streak alive.</p>
+        <% } else { %>
+          <ul class="quest-list">
+            <% dueQuests.forEach(q => { %>
+              <li class="quest-item">
+                <div class="quest-info">
+                  <span class="quest-title"><%= q.title %></span>
+                  <span class="badge badge-<%= q.difficulty %>"><%= q.difficulty %></span>
+                </div>
+                <form method="POST" action="/quests/<%= q.id %>/complete">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-sm btn-success">Complete ✓</button>
+                </form>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </section>
+
+      <% if (completedToday && completedToday.length > 0) { %>
+        <section class="panel">
+          <h2 class="panel-title">✅ Completed Today</h2>
+          <ul class="quest-list quest-list-done">
+            <% completedToday.forEach(t => { %>
+              <li class="quest-item quest-item-done">
+                <span class="quest-title"><%= t.title %></span>
+                <span class="badge badge-<%= t.difficulty %>"><%= t.difficulty %></span>
+              </li>
+            <% }) %>
+          </ul>
+        </section>
+      <% } %>
+
+      <div class="quick-links">
+        <a href="/quests" class="btn btn-outline">Manage Quests</a>
+        <a href="/quests/logs" class="btn btn-outline">View Logs</a>
+      </div>
+
+    <% } %>
+  </main>
+
 </body>
 </html>

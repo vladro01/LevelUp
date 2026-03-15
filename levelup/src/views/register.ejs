@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LevelUp – Create Account</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <span class="nav-brand">⚡ LevelUp</span>
+  </nav>
+
+  <main class="container">
+    <div class="auth-card">
+      <h1>Create an account</h1>
+      <p style="color: var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem">
+        Your account lets you log quests and track your progress over time.
+      </p>
+
+      <% if (errors.length) { %>
+        <ul class="error-list">
+          <% errors.forEach(e => { %><li><%= e.msg %></li><% }) %>
+        </ul>
+      <% } %>
+
+      <form method="POST" action="/auth/register">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" name="username" value="<%= values.username || '' %>"
+                 required minlength="3" maxlength="50" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" name="email" type="email"
+                 value="<%= values.email || '' %>" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" name="password" type="password"
+                 required minlength="8" autocomplete="new-password">
+          <small style="color: var(--text-muted); font-size: 0.78rem">Minimum 8 characters</small>
+        </div>
+        <button class="btn" style="width:100%; margin-top:0.5rem">Create account</button>
+      </form>
+
+      <p class="auth-footer">Already have an account? <a href="/auth/login">Sign in</a></p>
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LevelUp – My Avatar</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <span class="nav-brand">⚡ LevelUp</span>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/quests">Quests</a>
+      <a href="/quests/logs">My Logs</a>
+      <a href="/shop">Shop</a>
+      <a href="/avatar" class="active">My Avatar</a>
+      <span class="nav-user">Welcome, <strong><%= username %></strong></span>
+      <form method="POST" action="/auth/logout" style="display:inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="btn btn-sm btn-outline">Logout</button>
+      </form>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <% if (flash) { %>
+      <p class="flash flash-<%= flashType %>"><%= flash %></p>
+    <% } %>
+
+    <div class="avatar-layout">
+
+      <section class="panel avatar-panel">
+        <h2 class="panel-title">🧙 Your Character</h2>
+        <div class="avatar-stage">
+            <canvas id="main-avatar"
+            data-equipped="<%- JSON.stringify(equipped).replace(/"/g, '&quot;') %>"> 
+            </canvas>
+          <div class="avatar-name"><%= username %></div>
+          <div class="avatar-xp-note"><%= balance %> XP available · <a href="/shop">Visit Shop</a></div>
+        </div>
+
+        <div class="equipped-slots">
+          <% const slotLabels = { skin: '🎨 Skin', hat: '🎩 Hat', outfit: '👘 Outfit', accessory: '⚔️ Accessory' }; %>
+          <% ['skin','hat','outfit','accessory'].forEach(cat => { %>
+            <div class="equipped-slot">
+              <span class="slot-label"><%= slotLabels[cat] %></span>
+              <span class="slot-value">
+                <% if (equipped[cat]) { %>
+                  <%= inventory.find(i => i.item_key === equipped[cat])?.name || '—' %>
+                <% } else { %>
+                  <span style="color:var(--text-muted)">None</span>
+                <% } %>
+              </span>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+
+      <section class="panel inventory-panel">
+        <h2 class="panel-title">🎒 Inventory</h2>
+
+        <% if (!inventory.length) { %>
+          <p class="empty-state">No items yet. <a href="/shop">Visit the shop</a> to spend your XP!</p>
+        <% } else { %>
+          <% const categoryOrder = ['skin','hat','outfit','accessory'];
+             const categoryLabels = { skin:'🎨 Skin Tone', hat:'🎩 Hats', outfit:'👘 Outfits', accessory:'⚔️ Accessories' }; %>
+
+          <% categoryOrder.forEach(cat => { %>
+            <% const catItems = inventory.filter(i => i.category === cat); %>
+            <% if (!catItems.length) return; %>
+
+            <div class="inv-category">
+              <div class="inv-category-label"><%= categoryLabels[cat] %></div>
+              <div class="inv-items">
+                <% catItems.forEach(inv => { %>
+                  <div class="inv-item <%= inv.is_equipped ? 'inv-item-equipped' : '' %>">
+                    <canvas class="inv-canvas" width="40" height="40"
+                            data-item="<%= inv.item_key %>"></canvas>
+                    <div class="inv-item-info">
+                      <span class="inv-item-name"><%= inv.name %></span>
+                      <% if (inv.is_equipped) { %>
+                        <span class="badge-equipped">Equipped</span>
+                      <% } %>
+                    </div>
+                    <form method="POST" action="/avatar/equip/<%= inv.inv_id %>">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn-sm <%= inv.is_equipped ? 'btn-outline' : 'btn-accent' %>">
+                        <%= inv.is_equipped ? 'Unequip' : 'Equip' %>
+                      </button>
+                    </form>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
+
+        <div style="margin-top:1.5rem">
+          <a href="/shop" class="btn btn-outline">🛒 Go to Shop</a>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+  <script src="/avatar-renderer.js"></script>
+</body>
+</html>

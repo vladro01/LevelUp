@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LevelUp – Shop</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <span class="nav-brand">⚡ LevelUp</span>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/quests">Quests</a>
+      <a href="/quests/logs">My Logs</a>
+      <a href="/shop" class="active">Shop</a>
+      <a href="/avatar">My Avatar</a>
+      <span class="nav-user">Welcome, <strong><%= username %></strong></span>
+      <form method="POST" action="/auth/logout" style="display:inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="btn btn-sm btn-outline">Logout</button>
+      </form>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <div class="xp-banner">
+      <div class="xp-banner-inner">
+        <span class="xp-banner-label">💰 Available XP</span>
+        <span class="xp-banner-value"><%= balance %> XP</span>
+      </div>
+      <a href="/avatar" class="btn btn-sm btn-outline">View My Avatar →</a>
+    </div>
+
+    <% if (flash) { %>
+      <p class="flash flash-<%= flashType %>"><%= flash %></p>
+    <% } %>
+
+    <% const categoryLabels = { skin: '🎨 Skin Tone', hat: '🎩 Hats', outfit: '👘 Outfits', accessory: '⚔️ Accessories' }; %>
+    <% const categoryOrder = ['skin', 'hat', 'outfit', 'accessory']; %>
+
+    <% categoryOrder.forEach(cat => { %>
+      <% if (!grouped[cat] || !grouped[cat].length) return; %>
+      <section class="panel">
+        <h2 class="panel-title"><%= categoryLabels[cat] || cat %></h2>
+        <div class="shop-grid">
+          <% grouped[cat].forEach(item => { %>
+            <div class="shop-card <%= item.owned ? 'shop-card-owned' : '' %>">
+
+              <div class="shop-preview">
+                <canvas class="item-preview-canvas"
+                        width="48" height="48"
+                        data-item="<%= item.item_key %>"></canvas>
+              </div>
+
+              <div class="shop-card-body">
+                <div class="shop-card-name"><%= item.name %></div>
+                <div class="shop-card-desc"><%= item.description %></div>
+                <div class="shop-card-footer">
+                  <span class="xp-cost"><%= item.cost_xp %> XP</span>
+                  <% if (item.owned) { %>
+                    <span class="badge-owned">✓ Owned</span>
+                  <% } else if (balance >= item.cost_xp) { %>
+                    <form method="POST" action="/shop/<%= item.id %>/buy">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn-sm btn-success">Buy</button>
+                    </form>
+                  <% } else { %>
+                    <span class="badge-locked">🔒 Need <%= item.cost_xp - balance %> more XP</span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    <% }) %>
+
+  </main>
+
+  <script src="/avatar-renderer.js"></script>
+
+</body>
+</html>
