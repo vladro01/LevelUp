@@ -8,13 +8,18 @@ const { xpForDifficulty, levelFromXp, streakFromDays, xpToNextLevel } = require(
 router.get('/', async (req, res, next) => {
   try {
     if (!req.session.userId) {
-      return res.render('dashboard', { progress: null, dueQuests: [], completedToday: [] });
+      return res.render('dashboard', {
+        progress: null,
+        dueQuests: [],
+        completedToday: [],
+        showWelcomeBonus: false
+      });
     }
 
     const userId = req.session.userId;
     const today = new Date().toISOString().slice(0, 10);
 
-    // Active quests NOT yet completed today — the core daily loop
+    // Active quests NOT yet completed today
     const [dueQuests] = await pool.execute(
       `SELECT q.id, q.title, q.difficulty
        FROM quests q
@@ -28,7 +33,7 @@ router.get('/', async (req, res, next) => {
       [userId, userId, today]
     );
 
-    // Completed today (for the "done" section)
+    // Completed today
     const [completedToday] = await pool.execute(
       `SELECT q.title, q.difficulty
        FROM quest_logs l
@@ -47,16 +52,30 @@ router.get('/', async (req, res, next) => {
       [userId]
     );
 
-    const totalXp = allRows.reduce((sum, r) => sum + xpForDifficulty(r.difficulty), 0);
+    // Fetch bonus_xp for this user
+    const [userRow] = await pool.execute(
+      'SELECT bonus_xp FROM users WHERE id = ?',
+      [userId]
+    );
+    const bonusXp = Number(userRow[0]?.bonus_xp ?? 0);
+
+    // Total XP = earned from quests + welcome bonus
+    const earnedXp = allRows.reduce((sum, r) => sum + xpForDifficulty(r.difficulty), 0);
+    const totalXp = earnedXp + bonusXp;
     const level = levelFromXp(totalXp);
     const xpUntilNext = xpToNextLevel(totalXp);
 
-    const uniqueDays = [...new Set(allRows.map(r => r.performed_on.toISOString().slice(0, 10)))].sort();
+    const uniqueDays = [...new Set(
+      allRows.map(r => r.performed_on.toISOString().slice(0, 10))
+    )].sort();
     const streak = streakFromDays(uniqueDays);
+
+    const showWelcomeBonus = req.query.welcome === '1';
 
     res.render('dashboard', {
       dueQuests,
       completedToday,
+      showWelcomeBonus,
       progress: { totalXp, level, streak, xpUntilNext }
     });
   } catch (err) {

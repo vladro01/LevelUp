@@ -6,7 +6,7 @@ const pool = require('../db/pool');
 const requireAuth = require('../middleware/requireAuth');
 const { getXpBalance } = require('./shopRoutes');
 
-// ─── GET /avatar ──────────────────────────────────────────────────────────────
+// --- GET /avatar ---------------------------------
 router.get('/', requireAuth, async (req, res, next) => {
   try {
     const userId = req.session.userId;
@@ -22,7 +22,7 @@ router.get('/', requireAuth, async (req, res, next) => {
       [userId]
     );
 
-    // Build equipped map: category → item_key (only one per category)
+    // Build equipped map: category => item_key (only one per category)
     const equipped = {};
     for (const inv of inventory) {
       if (inv.is_equipped) equipped[inv.category] = inv.item_key;
@@ -42,7 +42,7 @@ router.get('/', requireAuth, async (req, res, next) => {
   }
 });
 
-// ─── POST /avatar/equip/:invId ────────────────────────────────────────────────
+// --- POST /avatar/equip/:invId -------------------------
 router.post('/equip/:invId', requireAuth, async (req, res, next) => {
   try {
     const userId = req.session.userId;

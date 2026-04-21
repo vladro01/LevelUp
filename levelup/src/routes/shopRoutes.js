@@ -3,10 +3,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
-const requireAuth = require('../middleware/requireAuth');
-const { xpForDifficulty } = require('../services/progressService');
 
-// Helper: get a user's total earned XP and spent XP → spendable balance
+// Helper: get a user's total earned XP, bonus XP, spent XP → spendable balance
 async function getXpBalance(userId) {
   const [earned] = await pool.execute(
     `SELECT COALESCE(SUM(
@@ -21,23 +19,23 @@ async function getXpBalance(userId) {
      WHERE l.user_id = ?`,
     [userId]
   );
-  const [spent] = await pool.execute(
-    'SELECT xp_spent FROM users WHERE id = ?',
+
+  const [userRow] = await pool.execute(
+    'SELECT xp_spent, bonus_xp FROM users WHERE id = ?',
     [userId]
   );
-  const totalEarned = Number(earned[0].total);
-  const totalSpent  = Number(spent[0]?.xp_spent ?? 0);
+
+  const totalEarned = Number(earned[0].total) + Number(userRow[0]?.bonus_xp ?? 0);
+  const totalSpent  = Number(userRow[0]?.xp_spent ?? 0);
   return { totalEarned, totalSpent, balance: totalEarned - totalSpent };
 }
 
 // ─── GET /shop ────────────────────────────────────────────────────────────────
-router.get('/', requireAuth, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const userId = req.session.userId;
-
     const { totalEarned, balance } = await getXpBalance(userId);
 
-    // All shop items + whether this user owns each one
     const [items] = await pool.execute(
       `SELECT s.*,
               (ui.id IS NOT NULL) AS owned
@@ -48,7 +46,6 @@ router.get('/', requireAuth, async (req, res, next) => {
       [userId]
     );
 
-    // Group by category for the view
     const grouped = {};
     for (const item of items) {
       if (!grouped[item.category]) grouped[item.category] = [];
@@ -68,12 +65,11 @@ router.get('/', requireAuth, async (req, res, next) => {
 });
 
 // ─── POST /shop/:id/buy ───────────────────────────────────────────────────────
-router.post('/:id/buy', requireAuth, async (req, res, next) => {
+router.post('/:id/buy', async (req, res, next) => {
   try {
     const userId = req.session.userId;
     const itemId = Number(req.params.id);
 
-    // Get item
     const [items] = await pool.execute(
       'SELECT * FROM shop_items WHERE id = ?',
       [itemId]
@@ -81,7 +77,6 @@ router.post('/:id/buy', requireAuth, async (req, res, next) => {
     if (!items.length) return res.status(404).send('Item not found');
     const item = items[0];
 
-    // Check not already owned
     const [owned] = await pool.execute(
       'SELECT id FROM user_inventory WHERE user_id = ? AND item_id = ?',
       [userId, itemId]
@@ -90,13 +85,11 @@ router.post('/:id/buy', requireAuth, async (req, res, next) => {
       return res.redirect('/shop?flash=You+already+own+that+item.&flashType=info');
     }
 
-    // Check balance
     const { balance } = await getXpBalance(userId);
     if (balance < item.cost_xp) {
       return res.redirect(`/shop?flash=Not+enough+XP!+You+need+${item.cost_xp}+XP.&flashType=danger`);
     }
 
-    // Deduct XP + add to inventory in a transaction
     const conn = await pool.getConnection();
     try {
       await conn.beginTransaction();

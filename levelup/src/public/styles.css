@@ -1,4 +1,4 @@
-/* ─── Reset & base ───────────────────────────────────────────────────────── */
+/* --- Reset & base -------------------*/
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -31,7 +31,7 @@ body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-h); }
 
-/* ─── Navbar ─────────────────────────────────────────────────────────────── */
+/* --- Navbar ------------------- */
 .navbar {
   display: flex;
   align-items: center;
@@ -67,14 +67,14 @@ a:hover { color: var(--accent-h); }
 
 .nav-user { font-size: 0.85rem; color: var(--text-muted); }
 
-/* ─── Container ──────────────────────────────────────────────────────────── */
+/* --- Container ----------------- */
 .container {
   max-width: 860px;
   margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
 }
 
-/* ─── Hero ───────────────────────────────────────────────────────────────── */
+/* --- Hero ----------------------*/
 .hero {
   text-align: center;
   padding: 5rem 1rem;
@@ -90,7 +90,7 @@ a:hover { color: var(--accent-h); }
 .hero p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; }
 .hero-actions { display: flex; gap: 1rem; justify-content: center; }
 
-/* ─── Stat bar ───────────────────────────────────────────────────────────── */
+/* --- Stat bar ----------------*/
 .stat-bar {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -139,7 +139,7 @@ a:hover { color: var(--accent-h); }
   min-width: 4px;
 }
 
-/* ─── Panel ──────────────────────────────────────────────────────────────── */
+/* --- Panel -------------------*/
 .panel {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -164,7 +164,7 @@ a:hover { color: var(--accent-h); }
   text-align: center;
 }
 
-/* ─── Quest list ─────────────────────────────────────────────────────────── */
+/* --- Quest list ---------------*/
 .quest-list {
   list-style: none;
   display: flex;
@@ -210,7 +210,7 @@ a:hover { color: var(--accent-h); }
   flex-wrap: wrap;
 }
 
-/* ─── Badges ─────────────────────────────────────────────────────────────── */
+/* --- Badges ----------------- */
 .badge {
   font-size: 0.7rem;
   font-weight: 600;
@@ -224,7 +224,7 @@ a:hover { color: var(--accent-h); }
 .badge-hard   { background: rgba(239,68,68,0.15);   color: var(--hard); }
 .badge-paused { background: rgba(136,146,164,0.15); color: var(--text-muted); }
 
-/* ─── Flash messages ─────────────────────────────────────────────────────── */
+/* ---- Flash messages -------------------- */
 .flash {
   padding: 0.75rem 1rem;
   border-radius: 8px;
@@ -235,7 +235,7 @@ a:hover { color: var(--accent-h); }
 .flash-danger  { background: rgba(239,68,68,0.12);  color: var(--danger);  border: 1px solid rgba(239,68,68,0.25); }
 .flash-info    { background: rgba(108,99,255,0.12); color: var(--accent);  border: 1px solid rgba(108,99,255,0.25); }
 
-/* ─── Error list ─────────────────────────────────────────────────────────── */
+/* --- Error list ------------------*/
 .error-list {
   list-style: none;
   background: rgba(239,68,68,0.1);
@@ -248,7 +248,7 @@ a:hover { color: var(--accent-h); }
 }
 .error-list li + li { margin-top: 0.25rem; }
 
-/* ─── Buttons ────────────────────────────────────────────────────────────── */
+/* --- Buttons -------------------*/
 .btn {
   display: inline-block;
   padding: 0.55rem 1.1rem;
@@ -279,7 +279,7 @@ a:hover { color: var(--accent-h); }
 .btn-danger { background: var(--danger); }
 .btn-danger:hover { background: #dc2626; }
 
-/* ─── Forms ──────────────────────────────────────────────────────────────── */
+/* --- Forms ----------------- */
 .form-row {
   display: flex;
   gap: 0.75rem;
@@ -313,7 +313,7 @@ a:hover { color: var(--accent-h); }
 
 .form-actions { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
 
-/* ─── Auth card ──────────────────────────────────────────────────────────── */
+/* --- Auth card ----------------- */
 .auth-card {
   max-width: 400px;
   margin: 5rem auto;
@@ -330,7 +330,7 @@ a:hover { color: var(--accent-h); }
   color: var(--text-muted);
 }
 
-/* ─── Logs table ─────────────────────────────────────────────────────────── */
+/* --- Logs table ---------------------- */
 .logs-table {
   width: 100%;
   border-collapse: collapse;
@@ -354,7 +354,7 @@ a:hover { color: var(--accent-h); }
 .logs-table tr:hover td { background: var(--surface2); }
 .log-notes { color: var(--text-muted); font-size: 0.82rem; }
 
-/* ─── Weekly bar chart ───────────────────────────────────────────────────── */
+/* --- Weekly bar chart -------------------- */
 .weekly-grid {
   display: flex;
   gap: 0.4rem;
@@ -387,10 +387,10 @@ a:hover { color: var(--accent-h); }
 .week-label { font-size: 0.65rem; color: var(--text-muted); text-align: center; }
 .week-xp    { font-size: 0.6rem;  color: var(--accent);     text-align: center; }
 
-/* ─── Quick links ────────────────────────────────────────────────────────── */
+/* --- Quick links -------------------- */
 .quick-links { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
 
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
+/* --- Responsive -------------------- */
 @media (max-width: 600px) {
   .navbar { padding: 0.75rem 1rem; }
   .stat-bar { grid-template-columns: 1fr 1fr; }
@@ -399,7 +399,7 @@ a:hover { color: var(--accent-h); }
   .form-row { flex-direction: column; }
 }
 
-/* ─── XP Banner ──────────────────────────────────────────────────────── */
+/* --- XP Banner ---------------------- */
 .xp-banner {
     display: flex;
     align-items: center;
@@ -414,7 +414,7 @@ a:hover { color: var(--accent-h); }
   .xp-banner-label { font-size: 0.75rem; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.06em; }
   .xp-banner-value { font-size: 1.8rem; font-weight: 800; color: #c4b5fd; }
   
-  /* ─── Shop Grid ────────────────────────────────────────────────────────*/
+  /* --- Shop Grid ---------------------- */
   .shop-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -489,7 +489,7 @@ a:hover { color: var(--accent-h); }
     color: var(--text-muted);
   }
   
-  /* ─── Avatar Layout  ────────────────────────────────────────────────────────*/
+  /* --- Avatar Layout  ---------------------- */
   .avatar-layout {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -529,7 +529,7 @@ a:hover { color: var(--accent-h); }
   }
   .avatar-xp-note { font-size: 0.8rem; color: var(--text-muted); }
   
-  /* ─── Equipped slots summary  ────────────────────────────────────────────────────────*/
+  /* --- Equipped slots summary  --------------------  */
   .equipped-slots {
     display: flex;
     flex-direction: column;
@@ -549,7 +549,7 @@ a:hover { color: var(--accent-h); }
   .slot-label { color: var(--text-muted); }
   .slot-value { font-weight: 500; }
   
-  /* ─── Inventory Panel ────────────────────────────────────────────────────────*/
+  /* --- Inventory Panel -------------------- */
   .inv-category { margin-bottom: 1.25rem; }
   .inv-category-label {
     font-size: 0.75rem;
@@ -609,7 +609,7 @@ a:hover { color: var(--accent-h); }
   }
   .btn-accent:hover { background: var(--accent-h); }
 
-/* ─── XP Banner ──────────────────────────────────────────────────────────── */
+/* --- XP Banner --------------------------- */
 .xp-banner {
     display: flex;
     align-items: center;
@@ -624,7 +624,7 @@ a:hover { color: var(--accent-h); }
   .xp-banner-label { font-size: 0.75rem; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.06em; }
   .xp-banner-value { font-size: 1.8rem; font-weight: 800; color: #c4b5fd; }
   
-  /* ─── Shop Grid ──────────────────────────────────────────────────────────── */
+  /* --- Shop Grid ----------------- */
   .shop-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -681,7 +681,7 @@ a:hover { color: var(--accent-h); }
   .badge-owned   { font-size: 0.75rem; font-weight: 600; color: var(--success); background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); border-radius: 99px; padding: 0.2rem 0.6rem; }
   .badge-locked  { font-size: 0.72rem; color: var(--text-muted); }
   
-  /* ─── Avatar Layout ──────────────────────────────────────────────────────── */
+  /* --- Avatar Layout -------------------- */
   .avatar-layout {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -693,7 +693,7 @@ a:hover { color: var(--accent-h); }
   .avatar-panel  { text-align: center; }
   .avatar-stage  { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem 0; }
   
-  /* Main avatar — let canvas set its own size, just add decorative border */
+  /* Main avatar - let the canvas set its own size, with added decorative border */
   #main-avatar {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
@@ -701,7 +701,7 @@ a:hover { color: var(--accent-h); }
     background: #0d0f1a;
     border: 2px solid var(--border);
     padding: 8px;
-    /* DO NOT set width/height here — JS controls canvas dimensions */
+    /* width/height is not set here,as the JS controls canvas dimensions */
   }
   
   .avatar-name    { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
@@ -721,7 +721,7 @@ a:hover { color: var(--accent-h); }
   .slot-label     { color: var(--text-muted); }
   .slot-value     { font-weight: 500; }
   
-  /* ─── Inventory Panel ────────────────────────────────────────────────────── */
+  /* --- Inventory Panel ------------------------ */
   .inv-category       { margin-bottom: 1.25rem; }
   .inv-category-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.6rem; }
   .inv-items          { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -754,3 +754,202 @@ a:hover { color: var(--accent-h); }
   
   .btn-accent       { background: var(--accent); color: #fff; }
   .btn-accent:hover { background: var(--accent-h); }
+  /* --- Welcome Bonus Popup ----------------------- */
+  .wb-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 1rem;
+  }
+
+  .wb-overlay.wb-visible { opacity: 1; }
+  .wb-overlay.wb-hiding  { opacity: 0; }
+
+  .wb-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.3s ease;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .wb-overlay.wb-visible .wb-modal {
+  transform: translateY(0) scale(1);
+  }
+
+  .wb-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  animation: wb-bounce 0.6s ease 0.3s both;
+  }
+
+  @keyframes wb-bounce {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+  }
+
+  .wb-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  }
+
+  .wb-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  }
+
+  .wb-reward {
+  background: linear-gradient(135deg, #1e1b4b, #2e1065);
+  border: 1px solid #4c1d95;
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  }
+
+  .wb-xp-badge {
+  display: inline-block;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #c4b5fd;
+  margin-bottom: 0.5rem;
+  animation: wb-glow 1.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes wb-glow {
+  from { text-shadow: 0 0 10px rgba(167, 139, 250, 0.3); }
+  to   { text-shadow: 0 0 25px rgba(167, 139, 250, 0.8); }
+  }
+
+  .wb-reward-text {
+  color: #a78bfa;
+  font-size: 0.85rem;
+  }
+
+  .wb-btn {
+  width: 100%;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  }
+
+  .wb-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  }
+  /* --- Security Page ----------------------- */
+  .security-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  
+  .security-stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  .security-stat-warning {
+    border-color: var(--warning);
+    background: rgba(245, 158, 11, 0.05);
+  }
+  
+  .security-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  
+  .security-stat-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .security-stat-value code {
+    font-family: monospace;
+    font-size: 0.85rem;
+    background: var(--surface);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  
+  /* --- Danger Zone ----------------------- */
+  .panel-danger {
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+  
+  .danger-zone {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1rem;
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+  }
+  
+  .danger-zone-info strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+  }
+  
+  .danger-zone-info p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+  
+  .delete-confirm-box {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
+  
+  .badge-danger {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 99px;
+    padding: 0.2rem 0.6rem;
+  }

@@ -1,5 +1,4 @@
 -- 002_shop.sql
--- Run this after 001_init.sql
 
 -- Track XP spent in the shop (so spendable XP = earned - spent)
 ALTER TABLE users ADD COLUMN xp_spent INT NOT NULL DEFAULT 0;
@@ -27,10 +26,10 @@ CREATE TABLE IF NOT EXISTS user_inventory (
   FOREIGN KEY (item_id) REFERENCES shop_items(id) ON DELETE CASCADE
 );
 
--- ─── Seed shop items ──────────────────────────────────────────────────────────
+-- ---- Seed shop items -------
 INSERT INTO shop_items (name, description, category, cost_xp, item_key) VALUES
 
--- Skin tones (cheapest — encourages first purchase)
+-- Skin tones
 ('Tan Skin',   'Warm tan skin tone.',       'skin', 20, 'skin_tan'),
 ('Dark Skin',  'Rich dark skin tone.',       'skin', 20, 'skin_dark'),
 ('Pale Skin',  'Cool pale skin tone.',       'skin', 20, 'skin_pale'),

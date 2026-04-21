@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LevelUp - Security</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <span class="nav-brand">⚡ LevelUp</span>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/quests">Quests</a>
+      <a href="/quests/logs">My Logs</a>
+      <a href="/shop">Shop</a>
+      <a href="/avatar">My Avatar</a>
+      <a href="/auth/security" class="active">Security</a>
+      <span class="nav-user">Welcome, <strong><%= username %></strong></span>
+      <form method="POST" action="/auth/logout" style="display:inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="btn btn-sm btn-outline">Logout</button>
+      </form>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <% if (flash) { %>
+      <p class="flash flash-<%= flashType %>"><%= flash %></p>
+    <% } %>
+
+    <section class="panel">
+      <h2 class="panel-title">🔐 Account Security</h2>
+      <div class="security-grid">
+        <div class="security-stat">
+          <span class="security-stat-label">Username</span>
+          <span class="security-stat-value"><%= user.username %></span>
+        </div>
+        <div class="security-stat">
+          <span class="security-stat-label">Email</span>
+          <span class="security-stat-value"><%= user.email %></span>
+        </div>
+        <div class="security-stat">
+          <span class="security-stat-label">Account Created</span>
+          <span class="security-stat-value">
+            <%= new Date(user.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) %>
+          </span>
+        </div>
+        <div class="security-stat">
+          <span class="security-stat-label">Last Login From</span>
+          <span class="security-stat-value">
+            <% if (lastLogin) { %>
+              <%= lastLogin.ip_address %> &mdash;
+              <%= new Date(lastLogin.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) %>
+            <% } else { %>
+              <span style="color:var(--text-muted)">First login</span>
+            <% } %>
+          </span>
+        </div>
+        <div class="security-stat <%= failedLast24h > 0 ? 'security-stat-warning' : '' %>">
+          <span class="security-stat-label">Failed Attempts (24h)</span>
+          <span class="security-stat-value">
+            <%= failedLast24h %>
+            <% if (failedLast24h > 3) { %>
+              <span class="badge-danger">⚠️ Review activity</span>
+            <% } else { %>
+              <span style="color:var(--success)">✓ Normal</span>
+            <% } %>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">📋 Recent Login Activity</h2>
+      <% if (!loginHistory.length) { %>
+        <p class="empty-state">No login history yet.</p>
+      <% } else { %>
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>IP Address</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% loginHistory.forEach(entry => { %>
+              <tr>
+                <td>
+                  <%= new Date(entry.created_at).toLocaleDateString('en-GB', {
+                    day: 'numeric', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                  }) %>
+                </td>
+                <td><code><%= entry.ip_address || '—' %></code></td>
+                <td>
+                  <% if (entry.success) { %>
+                    <span class="badge-owned">✓ Success</span>
+                  <% } else { %>
+                    <span class="badge badge-hard">✗ Failed</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+
+    <section class="panel panel-danger">
+      <h2 class="panel-title">⚠️ Danger Zone</h2>
+      <p style="color:var(--text-muted); margin-bottom:1.25rem; font-size:0.9rem">
+        Deleting your account is permanent. All your quests, logs, XP, and inventory will be wiped immediately and cannot be recovered.
+      </p>
+
+      <div class="danger-zone">
+        <div class="danger-zone-info">
+          <strong>Delete Account</strong>
+          <p>This will permanently delete your account and all associated data.</p>
+        </div>
+        <button class="btn btn-danger" id="delete-account-btn">Delete My Account</button>
+      </div>
+
+      <div id="delete-confirm" class="delete-confirm-box" style="display:none">
+        <p style="color:var(--danger); font-weight:600; margin-bottom:1rem">
+          ⚠️ Are you sure? This cannot be undone.
+        </p>
+        <form method="POST" action="/auth/delete-account">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group">
+            <label class="form-label">Enter your password to confirm</label>
+            <input class="form-input" type="password" name="password"
+                   placeholder="Your current password" required autocomplete="current-password">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Yes, permanently delete my account</button>
+            <button type="button" class="btn btn-outline" id="cancel-delete">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/security-page.js"></script>
+
+</body>
+</html>

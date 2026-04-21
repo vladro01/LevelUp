@@ -159,8 +159,8 @@
       drawAccessoryFront(ctx,  equipped.accessory, scale);
     };
   
-    // ── Auto-init: runs after the script tag loads ──────────────────────────────
-    // No inline scripts needed — reads equipped data from data attributes
+    // -- Auto-init: runs after the script tag loads --------------------
+    // Reads equipped data from data attributes
     document.addEventListener('DOMContentLoaded', function () {
   
       // Main avatar (avatar page)

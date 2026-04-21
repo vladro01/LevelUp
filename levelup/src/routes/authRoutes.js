@@ -5,10 +5,11 @@ const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const pool = require('../db/pool');
 const { loginLimiter, registerLimiter } = require('../middleware/rateLimiters');
+const requireAuth = require('../middleware/requireAuth');
 
 const router = express.Router();
 
-// ─── Register ────────────────────────────────────────────────────────────────
+// --- Register -------------------------
 
 router.get('/register', (req, res) => {
   res.render('register', { errors: [], values: {} });
@@ -17,18 +18,9 @@ router.get('/register', (req, res) => {
 router.post(
   '/register',
   registerLimiter,
-  body('username')
-    .trim()
-    .isLength({ min: 3, max: 50 })
-    .withMessage('Username must be 3–50 characters.'),
-  body('email')
-    .trim()
-    .isEmail()
-    .withMessage('Please enter a valid email address.')
-    .normalizeEmail(),
-  body('password')
-    .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters.'),
+  body('username').trim().isLength({ min: 3, max: 50 }).withMessage('Username must be 3–50 characters.'),
+  body('email').trim().isEmail().withMessage('Please enter a valid email address.').normalizeEmail(),
+  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters.'),
   async (req, res, next) => {
     try {
       const errors = validationResult(req);
@@ -42,8 +34,9 @@ router.post(
       const password_hash = await bcrypt.hash(password, 12);
 
       const [result] = await pool.execute(
-        'INSERT INTO users (username, email, password_hash) VALUES (?,?,?)',
-        [username, email, password_hash]
+        // Give every new user 500 bonus XP immediately on signup
+        'INSERT INTO users (username, email, password_hash, bonus_xp) VALUES (?,?,?,?)',
+        [username, email, password_hash, 500]
       );
 
       // Regenerate session to prevent session fixation
@@ -51,7 +44,8 @@ router.post(
         if (err) return next(err);
         req.session.userId = result.insertId;
         req.session.username = username;
-        res.redirect('/');
+        // Flag tells the dashboard to show the welcome popup once
+        res.redirect('/?welcome=1');
       });
     } catch (err) {
       if (err && err.code === 'ER_DUP_ENTRY') {
@@ -65,7 +59,7 @@ router.post(
   }
 );
 
-// ─── Login ────────────────────────────────────────────────────────────────────
+// --- Login -------------------------
 
 router.get('/login', (req, res) => {
   res.render('login', { error: null, values: {} });
@@ -97,7 +91,7 @@ router.post('/login', loginLimiter, async (req, res, next) => {
       });
     }
 
-    // FIX: Regenerate session ID on login to prevent session fixation attacks
+    // Regenerate session ID on login to prevent session fixation
     req.session.regenerate((err) => {
       if (err) return next(err);
       req.session.userId = user.id;
@@ -109,7 +103,7 @@ router.post('/login', loginLimiter, async (req, res, next) => {
   }
 });
 
-// ─── Logout ───────────────────────────────────────────────────────────────────
+// --- Logout -------------------------
 
 router.post('/logout', (req, res, next) => {
   req.session.destroy((err) => {
@@ -119,4 +113,92 @@ router.post('/logout', (req, res, next) => {
   });
 });
 
+// --- Security Page -------------------------
+ 
+router.get('/security', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.session.userId;
+ 
+    // Last 10 login attempts for this user
+    const [loginHistory] = await pool.execute(
+      `SELECT email_attempted, success, ip_address, created_at
+       FROM login_audit
+       WHERE user_id = ?
+       ORDER BY created_at DESC
+       LIMIT 10`,
+      [userId]
+    );
+ 
+    // Previous successful login (index 1 = the one before the current session)
+    const [successLogins] = await pool.execute(
+      `SELECT ip_address, created_at
+       FROM login_audit
+       WHERE user_id = ? AND success = 1
+       ORDER BY created_at DESC
+       LIMIT 2`,
+      [userId]
+    );
+ 
+    // Failed attempts in last 24 hours
+    const [failedRecent] = await pool.execute(
+      `SELECT COUNT(*) AS count
+       FROM login_audit
+       WHERE user_id = ? AND success = 0
+         AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`,
+      [userId]
+    );
+ 
+    // Account info
+    const [userInfo] = await pool.execute(
+      'SELECT username, email, created_at FROM users WHERE id = ?',
+      [userId]
+    );
+ 
+    res.render('security', {
+      loginHistory,
+      lastLogin: successLogins[1] || successLogins[0] || null,
+      failedLast24h: Number(failedRecent[0].count),
+      user: userInfo[0],
+      flash: req.query.flash || null,
+      flashType: req.query.flashType || 'info'
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+ 
+// --- Account Deletion -------------------------
+ 
+router.post('/delete-account', requireAuth, async (req, res, next) => {
+  try {
+    const userId = req.session.userId;
+    const password = String(req.body.password || '');
+ 
+    // Require password confirmation - never delete without verifying identity
+    const [rows] = await pool.execute(
+      'SELECT password_hash FROM users WHERE id = ?',
+      [userId]
+    );
+ 
+    if (!rows.length) return res.status(404).send('User not found');
+ 
+    const valid = await bcrypt.compare(password, rows[0].password_hash);
+    if (!valid) {
+      return res.redirect('/auth/security?flash=Incorrect+password.+Account+not+deleted.&flashType=danger');
+    }
+ 
+    // Delete user - CASCADE in schema handles all related data:
+    // quests, quest_logs, user_inventory, login_audit all deleted automatically
+    await pool.execute('DELETE FROM users WHERE id = ?', [userId]);
+ 
+    req.session.destroy((err) => {
+      if (err) return next(err);
+      res.clearCookie('levelup.sid');
+      res.redirect('/auth/register');
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+ 
 module.exports = router;

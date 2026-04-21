@@ -1,13 +1,21 @@
 {
   "name": "levelup",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A gamified, privacy-first habit tracking web application",
+  "main": "src/server.js",
   "scripts": {
-  "dev": "nodemon src/server.js",
-  "start": "node src/server.js",
-  "test": "jest"
-},
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/*.test.js"],
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/services/**/*.js"
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

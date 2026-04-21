@@ -49,14 +49,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// ─── Routes ───────────────────────────────────────────────────────────────────
+// --- Routes ----------------------------
 app.use('/',       require('./routes/dashboardRoutes'));
 app.use('/auth',   require('./routes/authRoutes'));
 app.use('/quests', require('./routes/questRoutes'));
 app.use('/shop',   require('./routes/shopRoutes').router);
 app.use('/avatar', require('./routes/avatarRoutes'));
 
-// ─── Error handlers ───────────────────────────────────────────────────────────
+// --- Error handlers --------------------
 app.use((err, req, res, next) => {
   if (err.code === 'EBADCSRFTOKEN') return res.status(403).send('Invalid CSRF token');
   next(err);

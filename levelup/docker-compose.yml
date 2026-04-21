@@ -1,0 +1,55 @@
+services:
+
+  # --- MySQL Database -------------------------
+  db:
+    image: mysql:8.0
+    container_name: levelup-db
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+
+    # Run migrations automatically on first start
+    # Any .sql file in docker-entrypoint-initdb.d/ runs once when the DB is created
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./src/db/migrations/001_init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./src/db/migrations/002_shop.sql:/docker-entrypoint-initdb.d/02_shop.sql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # --- Node.js App --------------------------
+  app:
+    build: .
+    container_name: levelup-app
+    restart: unless-stopped
+
+    # Pass env vars from your .env file into the container
+    env_file: .env
+
+    # Override DB_HOST — inside Docker, containers talk to each other by service name
+    # So the app connects to "db" not "127.0.0.1"
+    environment:
+      DB_HOST: db
+
+    ports:
+      - "${PORT:-8000}:8000"
+
+    # Don't start the app until the DB is healthy
+    depends_on:
+      db:
+        condition: service_healthy
+
+    volumes:
+      # Mount source code so changes reflect without rebuilding (dev only)
+      - ./src:/app/src:ro
+
+# --- Named volume - persists DB data between container restarts ------------
+volumes:
+  db-data:
