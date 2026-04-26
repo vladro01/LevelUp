@@ -52,7 +52,7 @@
           <span class="security-stat-label">Last Login From</span>
           <span class="security-stat-value">
             <% if (lastLogin) { %>
-              <%= lastLogin.ip_address %> &mdash;
+              <%= lastLogin.ip_address %> -
               <%= new Date(lastLogin.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) %>
             <% } else { %>
               <span style="color:var(--text-muted)">First login</span>
@@ -82,7 +82,7 @@
           <thead>
             <tr>
               <th>Date & Time</th>
-              <th>IP Address</th>
+              <th>Login Location</th>
               <th>Result</th>
             </tr>
           </thead>
@@ -95,7 +95,7 @@
                     hour: '2-digit', minute: '2-digit'
                   }) %>
                 </td>
-                <td><code><%= entry.ip_address || '—' %></code></td>
+                <td><code><%= entry.ip_address || '-' %></code></td>
                 <td>
                   <% if (entry.success) { %>
                     <span class="badge-owned">✓ Success</span>

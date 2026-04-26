@@ -9,7 +9,7 @@ const { nodeEnv, sessionSecret, db } = require('./config/env');
 
 const app = express();
 
-if (nodeEnv === 'production') app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +23,8 @@ const sessionStore = new MySQLStore({
   host: db.host,
   user: db.user,
   password: db.password,
-  database: db.database
+  database: db.database,
+  createDatabaseTable: true 
 });
 
 app.use(session({

@@ -49,7 +49,7 @@ function streakFromDays(days) {
 
 /**
  * XP needed to reach the next level.
- * Each level requires 100 XP â€” returns how many more XP until level-up.
+ * Each level requires 100 XP and this returns how much more XP is needed until level-up.
  */
 function xpToNextLevel(totalXp) {
   return 100 - (totalXp % 100);

@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
 
-// Helper: get a user's total earned XP, bonus XP, spent XP → spendable balance
+// Helper: get a user's total earned XP, bonus XP, spent XP => spendable balance
 async function getXpBalance(userId) {
   const [earned] = await pool.execute(
     `SELECT COALESCE(SUM(
@@ -30,7 +30,7 @@ async function getXpBalance(userId) {
   return { totalEarned, totalSpent, balance: totalEarned - totalSpent };
 }
 
-// ─── GET /shop ────────────────────────────────────────────────────────────────
+// --- GET /shop -------------------------------------
 router.get('/', async (req, res, next) => {
   try {
     const userId = req.session.userId;
@@ -64,7 +64,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// ─── POST /shop/:id/buy ───────────────────────────────────────────────────────
+// --- POST /shop/:id/buy -------------------------------------
 router.post('/:id/buy', async (req, res, next) => {
   try {
     const userId = req.session.userId;

@@ -1,7 +1,7 @@
-/**
+/*
  * welcome-bonus.js
  * Shows a one-time welcome popup when a new user registers.
- * Reads the trigger from a data attribute,therefore no inline scripts needed  making it CSP compliant.
+ * Reads the trigger from a data attribute 
  */
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -1,7 +1,7 @@
-/**
+/*
  * security-page.js
- * Handles the delete account confirmation toggle.
- * Its an external file so therefore no inline scripts making it CSP compliant.
+ * This handles the delete account confirmation toggle.
+ * It's an external file so therefore no inline scripts making it CSP compliant.
  */
 document.addEventListener('DOMContentLoaded', function () {
     const deleteBtn    = document.getElementById('delete-account-btn');

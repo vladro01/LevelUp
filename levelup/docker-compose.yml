@@ -16,6 +16,8 @@ services:
       - db-data:/var/lib/mysql
       - ./src/db/migrations/001_init.sql:/docker-entrypoint-initdb.d/01_init.sql
       - ./src/db/migrations/002_shop.sql:/docker-entrypoint-initdb.d/02_shop.sql
+      - ./src/db/migrations/003_welcome_bonus.sql:/docker-entrypoint-initdb.d/03_welcome_bonus.sql
+      - ./src/db/migrations/004_shop_expansion.sql:/docker-entrypoint-initdb.d/04_shop_expansion.sql
 
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
@@ -33,7 +35,7 @@ services:
     # Pass env vars from your .env file into the container
     env_file: .env
 
-    # Override DB_HOST — inside Docker, containers talk to each other by service name
+    # Override DB_HOST - inside Docker, containers talk to each other by service name
     # So the app connects to "db" not "127.0.0.1"
     environment:
       DB_HOST: db

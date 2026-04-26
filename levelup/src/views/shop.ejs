@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LevelUp – Shop</title>
+  <title>LevelUp - Shop</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -29,18 +29,27 @@
 
     <div class="xp-banner">
       <div class="xp-banner-inner">
-        <span class="xp-banner-label">💰 Available XP</span>
+        <span class="xp-banner-label"> Available XP</span>
         <span class="xp-banner-value"><%= balance %> XP</span>
       </div>
-      <a href="/avatar" class="btn btn-sm btn-outline">View My Avatar →</a>
+      <a href="/avatar" class="btn btn-sm btn-outline">View My Avatar =></a>
     </div>
 
     <% if (flash) { %>
       <p class="flash flash-<%= flashType %>"><%= flash %></p>
     <% } %>
 
-    <% const categoryLabels = { skin: '🎨 Skin Tone', hat: '🎩 Hats', outfit: '👘 Outfits', accessory: '⚔️ Accessories' }; %>
-    <% const categoryOrder = ['skin', 'hat', 'outfit', 'accessory']; %>
+    <%
+      const categoryLabels = {
+        skin:      '🎨 Skin Tone',
+        hat:       '🎩 Hats',
+        outfit:    '👘 Outfits',
+        weapon:    '⚔️ Weapons',
+        offhand:   '🛡️ Offhand',
+        accessory: '🦸 Accessories'
+      };
+      const categoryOrder = ['skin','hat','outfit','weapon','offhand','accessory'];
+    %>
 
     <% categoryOrder.forEach(cat => { %>
       <% if (!grouped[cat] || !grouped[cat].length) return; %>
@@ -49,13 +58,11 @@
         <div class="shop-grid">
           <% grouped[cat].forEach(item => { %>
             <div class="shop-card <%= item.owned ? 'shop-card-owned' : '' %>">
-
               <div class="shop-preview">
                 <canvas class="item-preview-canvas"
-                        width="48" height="48"
-                        data-item="<%= item.item_key %>"></canvas>
+                        data-item="<%= item.item_key %>"
+                        data-category="<%= item.category %>"></canvas>
               </div>
-
               <div class="shop-card-body">
                 <div class="shop-card-name"><%= item.name %></div>
                 <div class="shop-card-desc"><%= item.description %></div>
@@ -82,6 +89,7 @@
   </main>
 
   <script src="/avatar-renderer.js"></script>
+  <script src="/shop-preview.js"></script>
 
 </body>
 </html>

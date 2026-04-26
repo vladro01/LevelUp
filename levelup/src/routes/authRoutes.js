@@ -34,7 +34,7 @@ router.post(
       const password_hash = await bcrypt.hash(password, 12);
 
       const [result] = await pool.execute(
-        // Give every new user 500 bonus XP immediately on signup
+        // Give every new user 500 bonus XP right after signing up
         'INSERT INTO users (username, email, password_hash, bonus_xp) VALUES (?,?,?,?)',
         [username, email, password_hash, 500]
       );
@@ -78,7 +78,7 @@ router.post('/login', loginLimiter, async (req, res, next) => {
 
     const ok = user ? await bcrypt.compare(password, user.password_hash) : false;
 
-    // Audit log — does not leak whether the email exists
+    // Audit log - does not leak whether the email exists
     await pool.execute(
       'INSERT INTO login_audit (user_id, email_attempted, success, ip_address) VALUES (?,?,?,?)',
       [user ? user.id : null, email || '(empty)', ok ? 1 : 0, req.ip]

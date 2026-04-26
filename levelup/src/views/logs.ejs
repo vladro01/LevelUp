@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LevelUp – My Logs</title>
+  <title>LevelUp - My Logs</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -74,7 +74,7 @@
                 <td><%= l.title %></td>
                 <td><span class="badge badge-<%= l.difficulty %>"><%= l.difficulty %></span></td>
                 <td>+<%= l.difficulty === 'easy' ? 10 : l.difficulty === 'medium' ? 20 : 30 %></td>
-                <td class="log-notes"><%= l.notes || '—' %></td>
+                <td class="log-notes"><%= l.notes || '-' %></td>
               </tr>
             <% }) %>
           </tbody>

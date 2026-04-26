@@ -4,7 +4,7 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files first (Docker caches this layer — only re-runs npm install
+# Copy package files first (Docker caches this layer - only re-runs npm install
 # if package.json actually changes, making rebuilds much faster)
 COPY package*.json ./
 

@@ -701,7 +701,7 @@ a:hover { color: var(--accent-h); }
     background: #0d0f1a;
     border: 2px solid var(--border);
     padding: 8px;
-    /* width/height is not set here,as the JS controls canvas dimensions */
+    /* width/height is not set here, as the JS controls canvas dimensions */
   }
   
   .avatar-name    { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
