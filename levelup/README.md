@@ -1,6 +1,6 @@
 # ⚡ LevelUp
 
-> A gamified, privacy-first habit tracking web app - Final Year Project, By Vlad Rotari - 33830924, Goldsmiths University of London. Live link for app: https://levelup-production-e32e.up.railway.app 
+> A gamified, privacy-first habit tracking web app - Final Year Project, By Vlad Rotari - 33830924, Goldsmiths University of London. Live link for app: https://levelup-production-e32e.up.railway.app  
 
 LevelUp turns your daily habits into RPG-style quests. Complete these quests to earn XP or experience, build streaks, level up your character, and spend your earned XP in a shop to customise your pixel-art avatar. This app was built with security and privacy as core design constraints, as I noticed not that many apps in 2026 are heavily security focused.
 
